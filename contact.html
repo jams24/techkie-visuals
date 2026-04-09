@@ -104,20 +104,7 @@
 
                         <div id="formStatus" class="form-status"></div>
 
-                        <!--
-                            FUNCTIONAL CONTACT FORM using FormSubmit.co
-                            Replace YOUR_EMAIL@EMAIL.COM below with your actual email address.
-                            The first submission will require email confirmation from FormSubmit.
-                        -->
-                        <form class="contact-form" id="contactForm" action="https://formsubmit.co/el/ticixi" method="POST">
-                            <!-- FormSubmit configuration -->
-                            <input type="hidden" name="_subject" value="New enquiry from TECHKIE VISUALS website">
-                            <input type="hidden" name="_captcha" value="false">
-                            <input type="hidden" name="_template" value="table">
-                            <input type="hidden" name="_next" value="https://techkievisuals.co.uk/contact?sent=true">
-                            <!-- Honeypot anti-spam -->
-                            <input type="text" name="_honey" style="display:none">
-
+                        <form class="contact-form" id="contactForm">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="name">Your Name *</label>
@@ -261,13 +248,49 @@
             document.getElementById('cursorGlow').style.display = 'none';
         }
 
-        // Show success message if redirected back after form submission
-        if (new URLSearchParams(window.location.search).get('sent') === 'true') {
-            const formStatus = document.getElementById('formStatus');
-            formStatus.textContent = 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
-            formStatus.className = 'form-status success';
-            window.history.replaceState({}, '', '/contact');
-        }
+        // Contact form handler
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formStatus = document.getElementById('formStatus');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            formStatus.className = 'form-status';
+            formStatus.style.display = 'none';
+
+            const data = {
+                name: form.name.value,
+                email: form.email.value,
+                phone: form.phone.value,
+                service: form.service.value,
+                message: form.message.value
+            };
+
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    formStatus.textContent = 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
+                    formStatus.className = 'form-status success';
+                    form.reset();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (err) {
+                formStatus.textContent = 'Something went wrong. Please email us directly at info@techkievisuals.co.uk';
+                formStatus.className = 'form-status error';
+            }
+
+            submitBtn.textContent = 'Send Message';
+            submitBtn.disabled = false;
+        });
     </script>
 </body>
 </html>
