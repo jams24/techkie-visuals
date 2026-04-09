@@ -1,0 +1,12 @@
+{
+  "name": "techkie-visuals",
+  "version": "1.0.0",
+  "description": "TECHKIE VISUALS website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
