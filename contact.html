@@ -104,12 +104,7 @@
 
                         <div id="formStatus" class="form-status"></div>
 
-                        <form class="contact-form" id="contactForm" action="https://formsubmit.co/el/ticixi" method="POST">
-                            <input type="hidden" name="_next" value="https://techkievisuals.co.uk/contact?sent=true">
-                            <input type="hidden" name="_subject" value="New enquiry from TECHKIE VISUALS website">
-                            <input type="hidden" name="_template" value="table">
-                            <input type="hidden" name="_captcha" value="false">
-                            <input type="text" name="_honey" style="display:none">
+                        <form class="contact-form" id="contactForm">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="name">Your Name *</label>
@@ -253,13 +248,47 @@
             document.getElementById('cursorGlow').style.display = 'none';
         }
 
-        // Show success message after FormSubmit redirects back
-        if (new URLSearchParams(window.location.search).get('sent') === 'true') {
-            const formStatus = document.getElementById('formStatus');
-            formStatus.textContent = 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
-            formStatus.className = 'form-status success';
-            window.history.replaceState({}, '', '/contact');
-        }
+        // Contact form — FormSubmit AJAX method
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formStatus = document.getElementById('formStatus');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            formStatus.style.display = 'none';
+
+            var formData = new FormData();
+            formData.append('name', form.name.value);
+            formData.append('email', form.email.value);
+            formData.append('phone', form.phone.value);
+            formData.append('service', form.service.value);
+            formData.append('message', form.message.value);
+            formData.append('_subject', 'New enquiry from TECHKIE VISUALS website');
+            formData.append('_template', 'table');
+            formData.append('_captcha', 'false');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://formsubmit.co/ajax/info@techkievisuals.co.uk');
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    var result = JSON.parse(xhr.responseText);
+                    if (xhr.status === 200 && result.success) {
+                        formStatus.textContent = 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
+                        formStatus.className = 'form-status success';
+                        form.reset();
+                    } else {
+                        formStatus.textContent = 'Something went wrong. Please email us directly at info@techkievisuals.co.uk';
+                        formStatus.className = 'form-status error';
+                    }
+                    submitBtn.textContent = 'Send Message';
+                    submitBtn.disabled = false;
+                }
+            };
+            xhr.send(formData);
+        });
     </script>
 </body>
 </html>
