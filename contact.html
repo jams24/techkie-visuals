@@ -104,7 +104,12 @@
 
                         <div id="formStatus" class="form-status"></div>
 
-                        <form class="contact-form" id="contactForm">
+                        <form class="contact-form" id="contactForm" action="https://formsubmit.co/el/ticixi" method="POST">
+                            <input type="hidden" name="_next" value="https://techkievisuals.co.uk/contact?sent=true">
+                            <input type="hidden" name="_subject" value="New enquiry from TECHKIE VISUALS website">
+                            <input type="hidden" name="_template" value="table">
+                            <input type="hidden" name="_captcha" value="false">
+                            <input type="text" name="_honey" style="display:none">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="name">Your Name *</label>
@@ -248,52 +253,13 @@
             document.getElementById('cursorGlow').style.display = 'none';
         }
 
-        // Contact form handler — FormSubmit API (JSON method)
-        const form = document.getElementById('contactForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const formStatus = document.getElementById('formStatus');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
-            formStatus.className = 'form-status';
-            formStatus.style.display = 'none';
-
-            try {
-                const res = await fetch('https://formsubmit.co/ajax/9f8f42e68630e7d21984fb020d4a01685de94a947c73c07742ad33201c9117d9', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: form.name.value,
-                        email: form.email.value,
-                        phone: form.phone.value,
-                        service: form.service.value,
-                        message: form.message.value,
-                        _subject: 'New enquiry from TECHKIE VISUALS website',
-                        _template: 'table'
-                    })
-                });
-                const result = await res.json();
-
-                if (result.success) {
-                    formStatus.textContent = 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
-                    formStatus.className = 'form-status success';
-                    form.reset();
-                } else {
-                    throw new Error(result.message || 'Failed to send');
-                }
-            } catch (err) {
-                formStatus.textContent = 'Something went wrong. Please email us directly at info@techkievisuals.co.uk';
-                formStatus.className = 'form-status error';
-            }
-
-            submitBtn.textContent = 'Send Message';
-            submitBtn.disabled = false;
-        });
+        // Show success message after FormSubmit redirects back
+        if (new URLSearchParams(window.location.search).get('sent') === 'true') {
+            const formStatus = document.getElementById('formStatus');
+            formStatus.textContent = 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
+            formStatus.className = 'form-status success';
+            window.history.replaceState({}, '', '/contact');
+        }
     </script>
 </body>
 </html>
