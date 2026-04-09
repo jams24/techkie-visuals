@@ -248,7 +248,7 @@
             document.getElementById('cursorGlow').style.display = 'none';
         }
 
-        // Contact form handler
+        // Contact form handler — FormSubmit API (JSON method)
         const form = document.getElementById('contactForm');
         const submitBtn = document.getElementById('submitBtn');
         const formStatus = document.getElementById('formStatus');
@@ -260,19 +260,22 @@
             formStatus.className = 'form-status';
             formStatus.style.display = 'none';
 
-            const data = {
-                name: form.name.value,
-                email: form.email.value,
-                phone: form.phone.value,
-                service: form.service.value,
-                message: form.message.value
-            };
-
             try {
-                const res = await fetch('/api/contact', {
+                const res = await fetch('https://formsubmit.co/ajax/techkievisuals@gmail.com', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: form.name.value,
+                        email: form.email.value,
+                        phone: form.phone.value,
+                        service: form.service.value,
+                        message: form.message.value,
+                        _subject: 'New enquiry from TECHKIE VISUALS website',
+                        _template: 'table'
+                    })
                 });
                 const result = await res.json();
 
@@ -281,7 +284,7 @@
                     formStatus.className = 'form-status success';
                     form.reset();
                 } else {
-                    throw new Error(result.error);
+                    throw new Error(result.message || 'Failed to send');
                 }
             } catch (err) {
                 formStatus.textContent = 'Something went wrong. Please email us directly at info@techkievisuals.co.uk';
