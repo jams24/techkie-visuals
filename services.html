@@ -8,7 +8,364 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===================================
+           Services Page - Interactive Cards
+           =================================== */
+
+        .services-showcase {
+            padding: 5rem 0 6rem;
+        }
+
+        .services-categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Individual Service Box */
+        .svc-box {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-card);
+            min-height: 340px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .svc-box:hover {
+            border-color: var(--color-secondary);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            transform: translateY(-6px);
+        }
+
+        /* Front face - always visible */
+        .svc-front {
+            position: relative;
+            z-index: 2;
+            padding: 3rem 2.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .svc-box:hover .svc-front {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .svc-front-top {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .svc-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .svc-icon-box {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            background: rgba(200, 169, 126, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .svc-box:hover .svc-icon-box {
+            background: var(--color-secondary);
+        }
+
+        .svc-icon-box svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--color-secondary);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .svc-box:hover .svc-icon-box svg {
+            stroke: var(--color-primary);
+        }
+
+        .svc-front h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-white);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .svc-front .svc-tagline {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        .svc-front-bottom {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 2rem;
+        }
+
+        .svc-front-bottom .arrow {
+            transition: transform 0.3s;
+        }
+
+        .svc-box:hover .svc-front-bottom .arrow {
+            transform: translateX(4px);
+        }
+
+        /* Back face - revealed on hover */
+        .svc-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(200, 169, 126, 0.08) 100%);
+            pointer-events: none;
+        }
+
+        .svc-box:hover .svc-back {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .svc-back h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            margin-bottom: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .svc-back-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .svc-back-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--color-text);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .svc-box:hover .svc-back-list li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .svc-box:hover .svc-back-list li:nth-child(1) { transition-delay: 0.05s; }
+        .svc-box:hover .svc-back-list li:nth-child(2) { transition-delay: 0.1s; }
+        .svc-box:hover .svc-back-list li:nth-child(3) { transition-delay: 0.15s; }
+        .svc-box:hover .svc-back-list li:nth-child(4) { transition-delay: 0.2s; }
+        .svc-box:hover .svc-back-list li:nth-child(5) { transition-delay: 0.25s; }
+        .svc-box:hover .svc-back-list li:nth-child(6) { transition-delay: 0.3s; }
+
+        .svc-back-list li .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-secondary);
+            flex-shrink: 0;
+        }
+
+        .svc-back .svc-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            margin-top: auto;
+        }
+
+        .svc-back .svc-cta:hover {
+            color: var(--color-white);
+            gap: 0.75rem;
+        }
+
+        /* Gradient accent line at top of each card */
+        .svc-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 10;
+        }
+
+        .svc-box:hover::before {
+            opacity: 1;
+        }
+
+        /* Process section */
+        .process-section {
+            padding: 6rem 0;
+            background: var(--color-bg-light);
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .process-step::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: -1rem;
+            width: calc(100%);
+            height: 1px;
+            background: linear-gradient(90deg, var(--color-border-light), transparent);
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(200, 169, 126, 0.1);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            margin: 0 auto 1.25rem;
+            transition: all 0.4s;
+        }
+
+        .process-step:hover .step-number {
+            background: var(--color-secondary);
+            color: var(--color-primary);
+            border-color: var(--color-secondary);
+            transform: scale(1.1);
+        }
+
+        .process-step h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--color-white);
+            margin-bottom: 0.5rem;
+        }
+
+        .process-step p {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        /* Mobile - services cards stack */
+        @media (max-width: 768px) {
+            .services-categories {
+                grid-template-columns: 1fr;
+            }
+
+            .svc-box {
+                min-height: auto;
+            }
+
+            /* On mobile, show back content below front on tap */
+            .svc-front {
+                padding: 2rem 1.5rem;
+            }
+
+            .svc-back {
+                position: relative;
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+                padding: 0 1.5rem 2rem;
+                background: none;
+                border-top: 1px solid var(--color-border);
+            }
+
+            .svc-box:hover .svc-front {
+                opacity: 1;
+                transform: none;
+                pointer-events: auto;
+            }
+
+            .svc-back-list li {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .svc-front-bottom {
+                display: none;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .process-step::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Page Loader -->
@@ -42,106 +399,167 @@
         <div class="container">
             <p class="breadcrumb"><a href="index.html">Home</a> / Services</p>
             <h1>Our <span class="gradient-text">Services</span></h1>
-            <p class="subtitle">Comprehensive creative and technical solutions tailored to your business needs.</p>
+            <p class="subtitle">Hover over each service to explore what we offer.</p>
         </div>
     </section>
 
-    <!-- Services Detail -->
-    <section class="services-detail">
+    <!-- Services Showcase -->
+    <section class="services-showcase">
         <div class="container">
-            <div class="service-detail-card reveal">
-                <div class="service-detail-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Video Production</h2>
-                    <p class="service-lead">From initial concept to final delivery, we create compelling video content that captures attention and communicates your message with impact.</p>
+            <div class="services-categories">
 
-                    <h3>What We Offer</h3>
-                    <ul class="service-list">
-                        <li>Corporate and promotional videos</li>
-                        <li>Event coverage and documentation</li>
-                        <li>Product demonstrations and showcases</li>
-                        <li>Training and educational content</li>
-                        <li>Concept development and scriptwriting</li>
-                        <li>Professional filming with high-quality equipment</li>
-                        <li>Location scouting and logistics management</li>
-                        <li>Project management from start to finish</li>
-                    </ul>
-
-                    <p>Our production team combines technical expertise with creative vision to produce videos that engage audiences and achieve your communication objectives.</p>
+                <!-- Video Production -->
+                <div class="svc-box reveal stagger-1">
+                    <div class="svc-front">
+                        <div class="svc-front-top">
+                            <div class="svc-number">01</div>
+                            <div class="svc-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                            </div>
+                            <h3>Video Production</h3>
+                            <p class="svc-tagline">Compelling visual stories from concept to final cut — corporate films, promos, and brand content.</p>
+                        </div>
+                        <div class="svc-front-bottom">
+                            <span>See details</span>
+                            <span class="arrow">→</span>
+                        </div>
+                    </div>
+                    <div class="svc-back">
+                        <h4>What's Included</h4>
+                        <ul class="svc-back-list">
+                            <li><span class="dot"></span>Corporate & promotional videos</li>
+                            <li><span class="dot"></span>Event coverage & documentation</li>
+                            <li><span class="dot"></span>Concept development & scripting</li>
+                            <li><span class="dot"></span>Professional filming & equipment</li>
+                            <li><span class="dot"></span>Location scouting & logistics</li>
+                            <li><span class="dot"></span>Full project management</li>
+                        </ul>
+                        <a href="contact.html" class="svc-cta">Start a project →</a>
+                    </div>
                 </div>
+
+                <!-- Post-Production -->
+                <div class="svc-box reveal stagger-2">
+                    <div class="svc-front">
+                        <div class="svc-front-top">
+                            <div class="svc-number">02</div>
+                            <div class="svc-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                            </div>
+                            <h3>Post-Production</h3>
+                            <p class="svc-tagline">Expert editing, colour grading, motion graphics, and sound design that polishes every frame.</p>
+                        </div>
+                        <div class="svc-front-bottom">
+                            <span>See details</span>
+                            <span class="arrow">→</span>
+                        </div>
+                    </div>
+                    <div class="svc-back">
+                        <h4>What's Included</h4>
+                        <ul class="svc-back-list">
+                            <li><span class="dot"></span>Video editing & assembly</li>
+                            <li><span class="dot"></span>Colour correction & grading</li>
+                            <li><span class="dot"></span>Motion graphics & titles</li>
+                            <li><span class="dot"></span>VFX & compositing</li>
+                            <li><span class="dot"></span>Audio mixing & sound design</li>
+                            <li><span class="dot"></span>Multi-platform delivery</li>
+                        </ul>
+                        <a href="contact.html" class="svc-cta">Start a project →</a>
+                    </div>
+                </div>
+
+                <!-- IT Consultancy -->
+                <div class="svc-box reveal stagger-3">
+                    <div class="svc-front">
+                        <div class="svc-front-top">
+                            <div class="svc-number">03</div>
+                            <div class="svc-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            </div>
+                            <h3>IT Consultancy</h3>
+                            <p class="svc-tagline">Strategic technology solutions — digital transformation, cybersecurity, and infrastructure optimisation.</p>
+                        </div>
+                        <div class="svc-front-bottom">
+                            <span>See details</span>
+                            <span class="arrow">→</span>
+                        </div>
+                    </div>
+                    <div class="svc-back">
+                        <h4>What's Included</h4>
+                        <ul class="svc-back-list">
+                            <li><span class="dot"></span>IT strategy & planning</li>
+                            <li><span class="dot"></span>Digital transformation consulting</li>
+                            <li><span class="dot"></span>Cybersecurity advisory</li>
+                            <li><span class="dot"></span>System integration & optimisation</li>
+                            <li><span class="dot"></span>Vendor selection & management</li>
+                            <li><span class="dot"></span>IT project management</li>
+                        </ul>
+                        <a href="contact.html" class="svc-cta">Book a consultation →</a>
+                    </div>
+                </div>
+
+                <!-- Photography -->
+                <div class="svc-box reveal stagger-4">
+                    <div class="svc-front">
+                        <div class="svc-front-top">
+                            <div class="svc-number">04</div>
+                            <div class="svc-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            </div>
+                            <h3>Photography</h3>
+                            <p class="svc-tagline">Professional portraits, headshots, and commercial photography that builds your brand image.</p>
+                        </div>
+                        <div class="svc-front-bottom">
+                            <span>See details</span>
+                            <span class="arrow">→</span>
+                        </div>
+                    </div>
+                    <div class="svc-back">
+                        <h4>What's Included</h4>
+                        <ul class="svc-back-list">
+                            <li><span class="dot"></span>Corporate headshots & team photos</li>
+                            <li><span class="dot"></span>Professional portraits</li>
+                            <li><span class="dot"></span>Commercial & product photography</li>
+                            <li><span class="dot"></span>Event photography</li>
+                            <li><span class="dot"></span>Retouching & enhancement</li>
+                            <li><span class="dot"></span>Multi-format digital delivery</li>
+                        </ul>
+                        <a href="contact.html" class="svc-cta">Book a session →</a>
+                    </div>
+                </div>
+
             </div>
+        </div>
+    </section>
 
-            <div class="service-detail-card reveal">
-                <div class="service-detail-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Post-Production Services</h2>
-                    <p class="service-lead">Expert editing, colour grading, and finishing services that transform raw footage into polished, professional content.</p>
-
-                    <h3>What We Offer</h3>
-                    <ul class="service-list">
-                        <li>Professional video editing and assembly</li>
-                        <li>Colour correction and colour grading</li>
-                        <li>Motion graphics and title design</li>
-                        <li>Visual effects and compositing</li>
-                        <li>Audio mixing and sound design</li>
-                        <li>Format conversion and delivery</li>
-                        <li>Archive and restoration services</li>
-                        <li>Multi-platform optimisation</li>
-                    </ul>
-
-                    <p>Whether you have footage that needs editing or require complete post-production support, we deliver results that meet broadcast and digital distribution standards.</p>
-                </div>
+    <!-- How We Work -->
+    <section class="process-section">
+        <div class="container">
+            <div class="section-header center reveal">
+                <span class="section-label">Our Process</span>
+                <h2 class="section-title">How We Work</h2>
+                <p class="section-description">A straightforward, four-step process that takes your project from idea to delivery.</p>
             </div>
-
-            <div class="service-detail-card reveal">
-                <div class="service-detail-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <div class="process-steps">
+                <div class="process-step reveal stagger-1">
+                    <div class="step-number">1</div>
+                    <h3>Discovery</h3>
+                    <p>We learn about your goals, audience, and vision through an initial consultation.</p>
                 </div>
-                <div class="service-detail-content">
-                    <h2>Information Technology Consultancy</h2>
-                    <p class="service-lead">Strategic IT consultancy services to optimise your technology infrastructure, enhance security posture, and drive digital transformation.</p>
-
-                    <h3>What We Offer</h3>
-                    <ul class="service-list">
-                        <li>IT strategy and planning</li>
-                        <li>Technology assessment and recommendations</li>
-                        <li>Digital transformation consulting</li>
-                        <li>System integration and optimisation</li>
-                        <li>Cybersecurity advisory and compliance</li>
-                        <li>Technology vendor selection and management</li>
-                        <li>IT project management</li>
-                        <li>Technical documentation and training</li>
-                    </ul>
-
-                    <p>We help businesses leverage technology effectively to improve operations, enhance productivity, and achieve strategic objectives.</p>
+                <div class="process-step reveal stagger-2">
+                    <div class="step-number">2</div>
+                    <h3>Strategy</h3>
+                    <p>We develop a tailored plan with clear deliverables, timeline, and budget.</p>
                 </div>
-            </div>
-
-            <div class="service-detail-card reveal">
-                <div class="service-detail-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <div class="process-step reveal stagger-3">
+                    <div class="step-number">3</div>
+                    <h3>Execute</h3>
+                    <p>Our team brings the plan to life with precision, creativity, and regular updates.</p>
                 </div>
-                <div class="service-detail-content">
-                    <h2>Portrait Photography</h2>
-                    <p class="service-lead">Professional photography services that capture authentic moments and compelling brand imagery.</p>
-
-                    <h3>What We Offer</h3>
-                    <ul class="service-list">
-                        <li>Corporate headshots and team photography</li>
-                        <li>Professional portraits for individuals</li>
-                        <li>Commercial and product photography</li>
-                        <li>Event photography</li>
-                        <li>Location and studio sessions</li>
-                        <li>Image retouching and enhancement</li>
-                        <li>Digital delivery in multiple formats</li>
-                        <li>Print preparation and consultation</li>
-                    </ul>
-
-                    <p>Our photography services provide high-quality imagery for personal branding, corporate communications, and marketing materials.</p>
+                <div class="process-step reveal stagger-4">
+                    <div class="step-number">4</div>
+                    <h3>Deliver</h3>
+                    <p>Final review, revisions, and handover — ready to make an impact.</p>
                 </div>
             </div>
         </div>
@@ -251,6 +669,19 @@
             });
         } else {
             document.getElementById('cursorGlow').style.display = 'none';
+        }
+
+        // Mobile: toggle svc-box details on tap
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.svc-box').forEach(box => {
+                box.addEventListener('click', (e) => {
+                    if (e.target.closest('.svc-cta')) return;
+                    document.querySelectorAll('.svc-box').forEach(b => {
+                        if (b !== box) b.classList.remove('touched');
+                    });
+                    box.classList.toggle('touched');
+                });
+            });
         }
     </script>
 </body>
